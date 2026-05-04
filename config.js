@@ -6,7 +6,7 @@ window.CONFIG = {
     name: "Himizu",
     username: "@iwanttoclimb",
     bio: "I love to read. My shit is vibecoded!",
-    avatarUrl: "https://r2.guns.lol/08985141-8608-410a-8d7d-5a9e38814578.gif",
+    avatarUrl: "https://cdn.discordapp.com/avatars/1185678137787428915/45a9a18aeaf13c123ee4b67c724eb550.webp?size=128",
     location: "USA",
   },
   
