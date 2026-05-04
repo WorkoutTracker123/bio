@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>himizu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="/config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #ffffff;
+            --accent-glow: rgba(255, 255, 255, 0.1);
+            --bg-grid: rgba(255, 255, 255, 0.02);
+        }
+        body {
+            background-color: #030303;
+            color: #fff;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            color-scheme: dark;
+        }
+        .bg-grid-system {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, var(--bg-grid) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--bg-grid) 1px, transparent 1px);
+        }
+        .scanline {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 50%, transparent 51%);
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0.05;
+        }
+        .glass {
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(40px) saturate(1.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .technical-border {
+            position: relative;
+        }
+        .technical-border::before {
+            content: '';
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 20px; height: 2px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+        .technical-border::after {
+            content: '';
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 2px; height: 20px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+        .glow-border {
+            box-shadow: 0 0 80px -40px var(--accent-glow);
+        }
+        .text-glow {
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        .fade-in {
+            animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .hidden-screen {
+            display: none !important;
+        }
+        .noise-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            opacity: 0.02;
+            pointer-events: none;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3%3Cfilter id='noiseFilter'%3%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3%3C/filter%3%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3%3C/svg%3");
+        }
+    </style>
+</head>
+<body class="bg-grid-system">
+    <div class="noise-bg"></div>
+    <div class="scanline"></div>
+
+    <!-- Enter Screen -->
+    <div id="enter-screen" class="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center cursor-pointer">
+        <div class="flex flex-col items-center gap-6 animate-pulse">
+            <i data-lucide="play" class="w-12 h-12 text-white/20"></i>
+            <p class="font-mono text-[10px] tracking-[0.6em] text-white/40 uppercase">Click to proceed</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content" class="hidden-screen min-h-screen w-full relative flex flex-col items-center justify-center py-20 px-4">
+        <!-- Background -->
+        <div class="fixed inset-0 -z-10 bg-center bg-cover scale-110 opacity-40 blur-[2px]" id="bg-img"></div>
+        <div class="fixed inset-0 -z-10 bg-black/60"></div>
+
+        <div class="w-full max-w-[440px] space-y-12 fade-in">
+            <!-- Profile Card -->
+            <section class="glass rounded-3xl p-10 flex flex-col items-center text-center glow-border technical-border relative overflow-hidden">
+                <div class="absolute top-4 left-6 flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></div>
+                    <span class="font-mono text-[8px] tracking-widest text-white/30 uppercase">Im Online</span>
+                </div>
+                
+                <div class="w-32 h-32 rounded-full overflow-hidden mb-10 ring-4 ring-white/5 p-1 bg-white/5 shadow-2xl transition-all duration-700 hover:ring-white/20">
+                    <img id="avatar" src="" alt="" class="w-full h-full object-cover rounded-full transition-all duration-700 scale-110 hover:scale-100">
+                </div>
+
+                <h1 id="name" class="text-5xl font-bold tracking-tighter mb-3 text-glow italic"></h1>
+                <p id="username" class="text-white/40 text-[11px] font-mono tracking-[0.5em] uppercase mb-10 bg-white/5 px-4 py-1.5 rounded-full"></p>
+
+                <p id="bio" class="text-sm font-medium text-white/60 mb-10 leading-relaxed max-w-[85%]"></p>
+
+                <!-- Socials -->
+                <div id="socials" class="flex gap-5"></div>
+            </section>
+
+            <!-- Scripts Section -->
+            <section class="space-y-6">
+                <div class="flex items-center justify-between px-2">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="terminal" class="w-4 h-4 text-white/40"></i>
+                        <h2 class="font-mono text-[10px] font-bold uppercase tracking-[0.5em] text-white/30">Scripts</h2>
+                    </div>
+                    <span class="font-mono text-[8px] text-white/10 uppercase">v2.4.2_stable</span>
+                </div>
+
+                <div id="scripts-list" class="grid gap-4"></div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="text-center pt-8 border-t border-white/5">
+                <p class="font-mono text-[8px] uppercase tracking-[0.8em] text-white/10">Standalone v1.1.0</p>
+            </footer>
+        </div>
+
+        <!-- Music Player Widget -->
+        <div id="music-player" class="fixed bottom-8 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-[440px] glass rounded-3xl p-4 flex items-center gap-5 border-white/10 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] z-50 transition-all hover:border-white/20">
+            <div class="w-16 h-16 rounded-2xl overflow-hidden shrink-0 shadow-2xl ring-1 ring-white/10 relative group">
+                <img id="track-cover" src="" alt="" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <i data-lucide="music" class="w-6 h-6 text-white/80"></i>
+                </div>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-col gap-0.5">
+                    <h4 id="track-title" class="text-[13px] font-bold truncate tracking-tight text-white/90 italic"></h4>
+                    <div class="flex items-center justify-between">
+                        <p id="track-artist" class="text-[10px] text-white/40 truncate font-mono uppercase font-semibold"></p>
+                        <span id="time-display" class="text-[9px] font-mono text-white/20 tabular-nums">0:00 / 0:00</span>
+                    </div>
+                </div>
+                <!-- Progress -->
+                <div class="mt-4 relative w-full h-[4px] bg-white/5 rounded-full overflow-hidden group cursor-pointer" id="progress-container">
+                    <div id="progress-bar" class="h-full bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.4)] transition-all duration-100" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="flex items-center pr-1">
+                <button id="play-pause" class="w-12 h-12 rounded-full bg-white text-black flex items-center justify-center transition-all hover:scale-110 active:scale-95 shadow-xl">
+                    <i data-lucide="play" class="w-6 h-6 fill-current"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="audio-engine" loop></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const config = window.CONFIG;
+            if (!config) return;
+
+            const audio = document.getElementById('audio-engine');
+            const playBtn = document.getElementById('play-pause');
+            const progress = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            
+            // Apply Config
+            document.getElementById('bg-img').style.backgroundImage = `url('${config.theme.backgroundUrl}')`;
+            document.getElementById('avatar').src = config.profile.avatarUrl;
+            document.getElementById('name').textContent = config.profile.name;
+            document.getElementById('username').textContent = config.profile.username;
+            document.getElementById('bio').textContent = config.profile.bio;
+            
+            // Music Setup
+            document.getElementById('track-cover').src = config.music.coverUrl;
+            document.getElementById('track-title').textContent = config.music.title;
+            document.getElementById('track-artist').textContent = config.music.artist;
+            audio.src = config.music.audioUrl;
+
+            document.documentElement.style.setProperty('--accent', config.theme.accentColor);
+            document.documentElement.style.setProperty('--accent-glow', config.theme.glowColor);
+
+            // Audio Logic
+            function formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    audio.play();
+                    playBtn.innerHTML = '<i data-lucide="pause" class="w-5 h-5 fill-current text-black"></i>';
+                } else {
+                    audio.pause();
+                    playBtn.innerHTML = '<i data-lucide="play" class="w-5 h-5 fill-current text-black"></i>';
+                }
+                lucide.createIcons();
+            });
+
+            audio.addEventListener('timeupdate', () => {
+                const percent = (audio.currentTime / audio.duration) * 100;
+                progress.style.width = percent + '%';
+                
+                // Optional: Update time text if we add it
+                if (document.getElementById('time-display')) {
+                    document.getElementById('time-display').textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration || 0)}`;
+                }
+            });
+
+            // Seek logic
+            progressContainer.addEventListener('click', (e) => {
+                const rect = progressContainer.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+                const percent = x / width;
+                audio.currentTime = percent * audio.duration;
+            });
+
+            // Render Socials
+            const socialsContainer = document.getElementById('socials');
+            config.socials.forEach(social => {
+                const a = document.createElement('a');
+                a.href = social.url;
+                a.target = "_blank";
+                a.className = "w-14 h-14 glass rounded-3xl flex items-center justify-center text-white/30 hover:text-white hover:border-white/30 transition-all duration-500 shadow-xl hover:-translate-y-2 hover:bg-white/5";
+                
+                let iconName = 'globe';
+                if (social.platform === 'discord') iconName = 'message-square';
+                if (social.platform === 'telegram') iconName = 'send';
+                if (social.platform === 'github') iconName = 'github';
+                if (social.platform === 'twitter') iconName = 'twitter';
+                
+                a.innerHTML = `<i data-lucide="${iconName}" class="w-5 h-5"></i>`;
+                socialsContainer.appendChild(a);
+            });
+
+            // Render Scripts
+            const scriptsContainer = document.getElementById('scripts-list');
+            config.scripts.forEach(script => {
+                const div = document.createElement('div');
+                div.className = "glass rounded-3xl p-5 flex items-center justify-between border-white/[0.03] hover:border-white/20 hover:bg-white/[0.02] transition-all duration-500 group relative overflow-hidden";
+                div.innerHTML = `
+                    <div class="absolute inset-0 bg-gradient-to-r from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="flex items-center gap-5 relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-white/[0.03] flex items-center justify-center text-white/10 group-hover:text-white/80 group-hover:scale-110 transition-all duration-500">
+                            <i data-lucide="file-code" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-[13px] font-mono font-bold text-white/80 group-hover:text-white transition-colors tracking-tight">${script.name}</h3>
+                            <p class="text-[9px] font-mono text-white/20 font-bold uppercase tracking-widest">${script.size}</p>
+                        </div>
+                    </div>
+                    <button onclick="copyScript('${script.path}', this)" class="relative z-10 h-10 px-6 rounded-2xl glass bg-white/5 hover:bg-white text-[10px] font-mono font-bold uppercase tracking-[0.2em] text-white/40 hover:text-black flex items-center gap-3 transition-all duration-500 hover:scale-105 active:scale-95 shadow-lg">
+                        <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        <span>Copy</span>
+                    </button>
+                `;
+                scriptsContainer.appendChild(div);
+            });
+
+            // Initialize Icons
+            lucide.createIcons();
+
+            // Handle Entry
+            document.getElementById('enter-screen').addEventListener('click', () => {
+                document.getElementById('enter-screen').classList.add('hidden-screen');
+                document.getElementById('main-content').classList.remove('hidden-screen');
+                
+                // Auto-play music on entry
+                audio.play().then(() => {
+                    playBtn.innerHTML = '<i data-lucide="pause" class="w-5 h-5 fill-current text-black"></i>';
+                    lucide.createIcons();
+                }).catch(e => console.log("Autoplay blocked or failed:", e));
+            });
+        });
+
+        function copyScript(path, btn) {
+            const fullPath = window.location.origin + path;
+            const command = `curl -sSL ${fullPath} | bash`;
+            navigator.clipboard.writeText(command).then(() => {
+                const span = btn.querySelector('span');
+                const originalText = span.textContent;
+                const icon = btn.querySelector('i');
+                
+                span.textContent = "COPIED";
+                btn.classList.add('text-white');
+                
+                setTimeout(() => {
+                    span.textContent = originalText;
+                    btn.classList.remove('text-white');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
