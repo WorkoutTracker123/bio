@@ -28,7 +28,7 @@ window.CONFIG = {
   music: {
     title: "12 Stout Street",
     artist: "Rx Papi, Gud",
-    coverUrl: "/music/cover.webp",
-    audioUrl: "/music/track.mp3"
+    coverUrl: "/public/music/cover.webp",
+    audioUrl: "/public/music/track.mp3"
   }
 };
